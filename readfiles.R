@@ -12,9 +12,10 @@ library(tibble)
 rdf <- rdf()
 
 PROJECT_DIR <- "c:/R/Gutenberg"
-DATA_DIR    <- "c:/R/Gutenberg/data"
+DATA_DIR    <- paste0(PROJECT_DIR,"/data")
+RDF_DIR     <- paste0(DATA_DIR,"cache/epub")
 
-local_file <- paste0(DATA_DIR,"/cache/epub/5230/pg5230.rdf")  # The Invisible Man
+rdf_file <- paste0(RDF_DIR,"/5230/pg5230.rdf")  # The Invisible Man
 
-system.file(local_file, package="redland") %>%
+system.file(rdf_file, package="redland") %>%
   rdf_parse() 
