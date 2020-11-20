@@ -1,21 +1,26 @@
-# Read Files
-# Project Gutenberg catalogs RDF files.
+# Read files
+# Read the Gutenberg RDF files and extract basic information, then save to a data frame
 
-# Using code from 
-# https://cran.r-project.org/web/packages/rdflib/vignettes/rdf_intro.html
+# Setup
 
-library(rdflib)
-library(dplyr)
-library(tidyr)
-library(tibble)
-
-rdf <- rdf()
+library(xml2)
 
 PROJECT_DIR <- "c:/R/Gutenberg"
 DATA_DIR    <- paste0(PROJECT_DIR,"/data")
-RDF_DIR     <- paste0(DATA_DIR,"cache/epub")
+RDF_DIR     <- paste0(DATA_DIR,"/cache/epub")
 
-rdf_file <- paste0(RDF_DIR,"/5230/pg5230.rdf")  # The Invisible Man
+# Get the list of files and convert to numbers
+filelist <- list.files(path= RDF_DIR)
+filenum <- as.numeric(filelist)
+filenum=sort(na.omit(filenum))
+summary(filenum)
+head(filenum)
+tail(filenum)
 
-system.file(rdf_file, package="redland") %>%
-  rdf_parse() 
+# Loop through list and extract the book information
+
+for(i in filenum[1:100]){
+  rdf_file <- paste0(RDF_DIR,"/",i,"/pg",i,".rdf")  
+  print(paste("reading file number",i," ",rdf_file))
+  pg <- read_xml(rdf_file)
+}

@@ -3,5 +3,7 @@
 .RData
 .Ruserdata
 *.zip
-.pdf
+*.tar
+*.pdf
 feedeR.pdf
+data/cache/
