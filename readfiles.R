@@ -4,9 +4,18 @@
 # Some issues with identifying fields.  Have fields which are usually strings, but sometimes lists.
 # Size and Format still need some work.
 
+# Update 18/12/2020
+# Changed the Author field
+# Defined year (of release on Gutenberg) from Date
+
+# Size and File Type?
+# Still have problems with reading the ull list (only get 6300 or so), and file sizes don't seem right on a spot check.
+
+
 # Setup
 
 library(xml2)
+library(dplyr)
 
 PROJECT_DIR <- "c:/R/Gutenberg"
 DATA_DIR    <- paste0(PROJECT_DIR,"/data")
@@ -23,9 +32,12 @@ tail(filenum)
 # Loop through list and extract the book information
 
 gutenberg = data.frame()
+
 #for(i in filenum){
-for(i in filenum[1:1000]){
+for(i in tail(filenum,10)){
+#for(i in filenum[1:10]){
   rdf_file <- paste0(RDF_DIR,"/",i,"/pg",i,".rdf")  
+  print(paste("reading file",rdf_file))
   pg <- read_xml(rdf_file)
   title <- trimws(xml_text(xml_find_all(pg, "//dcterms:title")))     # get title
   downloads <- as.numeric(trimws(xml_text(xml_find_all(pg, "//pgterms:downloads"))))  #get total downloads
@@ -38,9 +50,14 @@ for(i in filenum[1:1000]){
   language <- toString(language)
   d <- trimws(xml_text(xml_find_all(pg, "//dcterms:issued")))           # Date Issued
   if(d != "None")  date <- as.Date(d)
-  sizes <- trimws(xml_text(xml_find_all(pg, "//dcterms:extent")))   # File Sizes
-  size  <- as.numeric(size[1])
-  formats <- trimws(xml_text(xml_find_all(pg, "//dcterms:format"))) # File formats
+  sizes <- trimws(xml_text(xml_find_all(pg, "//dcterms:extent")))   # All the File Sizes
+  formats <- trimws(xml_text(xml_find_all(pg, "//dcterms:format"))) # All the File formats
+  size  <- as.numeric(sizes[match("text/plain",formats)])            # Size of the Text file
+  if(is.na(size)) size  <- as.numeric(sizes[match("text/plain; charset=us-ascii",formats)]) # Size of the Text file
+  if(is.na(size)) size  <- as.numeric(sizes[match("text/plain; charset=utf-8",formats)])    # Size of the Text file
+  if(is.na(size)) size  <- as.numeric(sizes[match("text/html",formats)])                    # Size of the Text file
+  if(is.na(size)) size  <- as.numeric(sizes[match("text/plain; charset=iso-8859-1",formats)])                    # Size of the Text file
+  
   language <- toString(language)
 #  print(paste("reading file number",i,":",title,"by",author))
   if(length(title)>0){
@@ -52,15 +69,28 @@ for(i in filenum[1:1000]){
                            subject_list = I(list(subjects)), 
                            date, 
                            language, 
+                           sizes = I(list(sizes)),
+                           formats = I(list(formats)),
                            size)
     gutenberg <- rbind(gutenberg,xmlframe)
   }
 }
 
+gutenberg$year <- as.numeric(format(gutenberg$date,"%Y"))
+
 summary(gutenberg$language)
-summary(gutenberg$author)
+#summary(gutenberg$author)
 summary(gutenberg$date)
+summary(gutenberg$year)
 summary(gutenberg$downloads)
 summary(gutenberg$size)
 
 hist(gutenberg$downloads)
+hist(gutenberg$year,breaks = max(gutenberg$year)-min(gutenberg$year))
+
+# Maximum downloads?
+tail(arrange(gutenberg[,c("title","author","downloads","date")],downloads),10)
+
+# File formats for missing sizes?
+gutenberg[,'formats'][is.na(gutenberg$size)]
+gutenberg[is.na(gutenberg$size),c('filenumber','title')]
