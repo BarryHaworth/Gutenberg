@@ -36,8 +36,8 @@ tail(filenum)
 gutenberg = data.frame()
 
 #for(i in filenum){
-for(i in tail(filenum,20)){
-#for(i in filenum[1:10]){
+#for(i in tail(filenum,20)){
+for(i in filenum[1:1000]){
   rdf_file <- paste0(RDF_DIR,"/",i,"/pg",i,".rdf")  
   print(paste("reading file",rdf_file))
   pg <- read_xml(rdf_file)
@@ -91,8 +91,22 @@ hist(gutenberg$downloads)
 hist(gutenberg$year,breaks = max(gutenberg$year)-min(gutenberg$year))
 
 # Maximum downloads?
+print("Downloaded Most Often")
 tail(arrange(gutenberg[,c("title","author","downloads","date")],downloads),10)
 
 # File formats for missing sizes?
 gutenberg[,'formats'][is.na(gutenberg$size)]
-gutenberg[is.na(gutenberg$size),c('filenumber','title')]
+print("Files with NA size")
+gutenberg[is.na(gutenberg$size),c('filenumber','title')]  
+
+# Check number of sizes, number of formats
+
+gutenberg$sizes.n   <- 0
+gutenberg$formats.n <- 0
+
+for(i in seq(1:length(gutenberg))){
+  gutenberg$sizes.n[i] <- length(gutenberg$sizes[[i]])
+  gutenberg$formats.n[i] <- length(gutenberg$formats[[i]])
+}
+
+# Number of sizes does not line up with number of formats.  Something weird is happening when the files are read.
