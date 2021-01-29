@@ -1,4 +1,6 @@
 # Get copies of Project Gutenberg files
+# Information about catalogs available here:
+#  https://www.gutenberg.org/ebooks/offline_catalogs.html 
 
 library(dplyr)
 # library(rmutil)

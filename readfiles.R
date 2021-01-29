@@ -37,7 +37,7 @@ gutenberg = data.frame()
 
 #for(i in filenum){
 #for(i in tail(filenum,20)){
-for(i in filenum[1:1000]){
+for(i in filenum[1:179]){
   rdf_file <- paste0(RDF_DIR,"/",i,"/pg",i,".rdf")  
   print(paste("reading file",rdf_file))
   pg <- read_xml(rdf_file)
@@ -52,6 +52,7 @@ for(i in filenum[1:1000]){
   language <- toString(language)
   d <- trimws(xml_text(xml_find_all(pg, "//dcterms:issued")))           # Date Issued
   if(d != "None")  date <- as.Date(d)
+  files <- trimws(xml_text(xml_find_all(pg, "//pgterms:file")))   # All the File details
   sizes <- trimws(xml_text(xml_find_all(pg, "//dcterms:extent")))   # All the File Sizes
   formats <- trimws(xml_text(xml_find_all(pg, "//dcterms:format"))) # All the File formats
   size  <- as.numeric(sizes[match("text/plain",formats)])            # Size of the Text file
@@ -71,6 +72,7 @@ for(i in filenum[1:1000]){
                            subject_list = I(list(subjects)), 
                            date, 
                            language, 
+                           files = I(list(files)),
                            sizes = I(list(sizes)),
                            formats = I(list(formats)),
                            size)
