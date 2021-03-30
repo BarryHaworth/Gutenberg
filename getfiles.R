@@ -6,7 +6,7 @@ library(dplyr)
 # library(rmutil)
 library(data.table)
 
-PROJECT_DIR <- "c:/R/Gutenberg"
+(PROJECT_DIR <- "c:/R/Gutenberg")
 DATA_DIR    <- "c:/R/Gutenberg/data"
 
 local_file <- paste0(DATA_DIR,"/rdf-files.tar.zip")

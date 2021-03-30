@@ -13,15 +13,22 @@
 
 # Still have problems with reading the full list (only get 6300 or so)
 
+# 30/03/2021
+# file has /pgterms, /dcterms (project Gutenberg, Document terms?)
+
+#  Trying to line up sizes (dcterm:extent) with file types (dcterm:format)
+#  These appear to be nested under file (pgterms:file) <- DONE
 
 # Setup
 
 library(xml2)
 library(dplyr)
+library(openxlsx)
 
 PROJECT_DIR <- "c:/R/Gutenberg"
 DATA_DIR    <- paste0(PROJECT_DIR,"/data")
-RDF_DIR     <- paste0(DATA_DIR,"/cache/epub")
+# RDF_DIR     <- paste0(DATA_DIR,"/cache/epub")  # Old directory
+RDF_DIR     <- paste0(DATA_DIR,"/export/sunsite/users/gutenbackend/cache/epub")
 
 # Get the list of files and convert to numbers
 filelist <- list.files(path= RDF_DIR)
@@ -35,13 +42,15 @@ tail(filenum)
 
 gutenberg = data.frame()
 
-#for(i in filenum){
-#for(i in tail(filenum,20)){
-for(i in filenum[1:179]){
+for(i in filenum){
+# for(i in tail(filenum,20)){  # the last 20
+#for(i in filenum[1:179]){    # the first 179
   rdf_file <- paste0(RDF_DIR,"/",i,"/pg",i,".rdf")  
   print(paste("reading file",rdf_file))
   pg <- read_xml(rdf_file)
-  title <- trimws(xml_text(xml_find_all(pg, "//dcterms:title")))     # get title
+  # xml_structure(pg)
+  title <- trimws(xml_text(xml_find_all(pg, "//dcterms:title")))[1]     # get (first) title
+  title <- toString(title)
   downloads <- as.numeric(trimws(xml_text(xml_find_all(pg, "//pgterms:downloads"))))  #get total downloads
   subjects  <- trimws(xml_text(xml_find_all(pg, "//dcterms:subject")))  # get subject
   author <- trimws(xml_text(xml_find_all(pg, "//pgterms:name")))       # Author Name
@@ -54,15 +63,9 @@ for(i in filenum[1:179]){
   if(d != "None")  date <- as.Date(d)
   files <- trimws(xml_text(xml_find_all(pg, "//pgterms:file")))   # All the File details
   sizes <- trimws(xml_text(xml_find_all(pg, "//dcterms:extent")))   # All the File Sizes
-  formats <- trimws(xml_text(xml_find_all(pg, "//dcterms:format"))) # All the File formats
-  size  <- as.numeric(sizes[match("text/plain",formats)])            # Size of the Text file
-  if(is.na(size)) size  <- as.numeric(sizes[match("text/plain; charset=us-ascii",formats)]) # Size of the Text file
-  if(is.na(size)) size  <- as.numeric(sizes[match("text/plain; charset=utf-8",formats)])    # Size of the Text file
-  if(is.na(size)) size  <- as.numeric(sizes[match("text/html",formats)])                    # Size of the Text file
-  if(is.na(size)) size  <- as.numeric(sizes[match("text/plain; charset=iso-8859-1",formats)])                    # Size of the Text file
-  
+  size  <- as.numeric(sizes[grepl("text/plain",files)][1])            # Size of the first file whose name contains text/plain
   language <- toString(language)
-#  print(paste("reading file number",i,":",title,"by",author))
+  #  print(paste("reading file number",i,":",title,"by",author))
   if(length(title)>0){
     xmlframe <- data.frame(title, 
                            author,
@@ -75,7 +78,7 @@ for(i in filenum[1:179]){
                            files = I(list(files)),
                            sizes = I(list(sizes)),
                            formats = I(list(formats)),
-                           size)
+                           size = I(size))
     gutenberg <- rbind(gutenberg,xmlframe)
   }
 }
@@ -83,7 +86,6 @@ for(i in filenum[1:179]){
 gutenberg$year <- as.numeric(format(gutenberg$date,"%Y"))
 
 summary(gutenberg$language)
-#summary(gutenberg$author)
 summary(gutenberg$date)
 summary(gutenberg$year)
 summary(gutenberg$downloads)
@@ -101,14 +103,8 @@ gutenberg[,'formats'][is.na(gutenberg$size)]
 print("Files with NA size")
 gutenberg[is.na(gutenberg$size),c('filenumber','title')]  
 
-# Check number of sizes, number of formats
-
-gutenberg$sizes.n   <- 0
-gutenberg$formats.n <- 0
-
-for(i in seq(1:length(gutenberg))){
-  gutenberg$sizes.n[i] <- length(gutenberg$sizes[[i]])
-  gutenberg$formats.n[i] <- length(gutenberg$formats[[i]])
-}
-
-# Number of sizes does not line up with number of formats.  Something weird is happening when the files are read.
+save(gutenberg,file=paste0(DATA_DIR,"/gutenberg.RData"))
+# Need to tidy up the export to XLS to capture subject - cannot export lists as columns in Excel
+write.xlsx(gutenberg %>% 
+             select(c("title","author","author_alias","filenumber","downloads","date","language","size","year")),
+           paste0(DATA_DIR,"/gutenberg.xlsx"))
