@@ -7,5 +7,5 @@ sizecheck <- function(num){
   return(filesize)
 }
 
-sizecheck(177)
-
+sizecheck(64596)
+gutenberg$size[gutenberg$filenumber==64596]

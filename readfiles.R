@@ -34,6 +34,7 @@ RDF_DIR     <- paste0(DATA_DIR,"/export/sunsite/users/gutenbackend/cache/epub")
 filelist <- list.files(path= RDF_DIR)
 filenum <- as.numeric(filelist)
 filenum=sort(na.omit(filenum))
+filenum <- filenum[1:length(filenum)-1]  # Drop the last filenum, which is a dud.
 summary(filenum)
 head(filenum)
 tail(filenum)
@@ -44,26 +45,27 @@ gutenberg = data.frame()
 
 for(i in filenum){
 # for(i in tail(filenum,20)){  # the last 20
-#for(i in filenum[1:179]){    # the first 179
+#for(i in filenum[64500:64600]){    # the first 179
   rdf_file <- paste0(RDF_DIR,"/",i,"/pg",i,".rdf")  
   print(paste("reading file",rdf_file))
   pg <- read_xml(rdf_file)
   # xml_structure(pg)
-  title <- trimws(xml_text(xml_find_all(pg, "//dcterms:title")))[1]     # get (first) title
-  title <- toString(title)
-  downloads <- as.numeric(trimws(xml_text(xml_find_all(pg, "//pgterms:downloads"))))  #get total downloads
-  subjects  <- trimws(xml_text(xml_find_all(pg, "//dcterms:subject")))  # get subject
-  author <- trimws(xml_text(xml_find_all(pg, "//pgterms:name")))       # Author Name
+  title <- trimws(xml_text(xml_find_all(pg, "//dcterms:title")))[1]                  # get (first) title
+  title <- toString(title) 
+  downloads <- as.numeric(trimws(xml_text(xml_find_all(pg, "//pgterms:downloads")))) # get total downloads
+  subjects  <- trimws(xml_text(xml_find_all(pg, "//dcterms:subject")))               # get subjects
+  author <- trimws(xml_text(xml_find_all(pg, "//pgterms:name")))                     # Author Name
   author <- toString(author)
-  author_alias <- trimws(xml_text(xml_find_all(pg, "//pgterms:alias")))       # Author
+  author_alias <- trimws(xml_text(xml_find_all(pg, "//pgterms:alias")))              # Author Alias
   author_alias <- toString(author_alias)
-  language <- trimws(xml_text(xml_find_all(pg, "//dcterms:language")))  # language
+  language <- trimws(xml_text(xml_find_all(pg, "//dcterms:language")))               # language
   language <- toString(language)
-  d <- trimws(xml_text(xml_find_all(pg, "//dcterms:issued")))           # Date Issued
+  d <- trimws(xml_text(xml_find_all(pg, "//dcterms:issued")))                        # Date Issued
   if(d != "None")  date <- as.Date(d)
-  files <- trimws(xml_text(xml_find_all(pg, "//pgterms:file")))   # All the File details
-  sizes <- trimws(xml_text(xml_find_all(pg, "//dcterms:extent")))   # All the File Sizes
-  size  <- as.numeric(sizes[grepl("text/plain",files)][1])            # Size of the first file whose name contains text/plain
+  files <- trimws(xml_text(xml_find_all(pg, "//pgterms:file")))                      # All the File details
+  sizes <- trimws(xml_text(xml_find_all(pg, "//dcterms:extent")))                    # All the File Sizes
+  size  <- as.numeric(sizes[grepl("text/plain",files)&!grepl("zip",files)][1])  # Size of the first text/plain which isn't a zip
+  SF <- sum(grepl("Science fiction",subjects))  # Science Fiction flag
   language <- toString(language)
   #  print(paste("reading file number",i,":",title,"by",author))
   if(length(title)>0){
@@ -73,12 +75,14 @@ for(i in filenum){
                            filenumber=i, 
                            downloads, 
                            subject_list = I(list(subjects)), 
+                           SF,
                            date, 
                            language, 
                            files = I(list(files)),
                            sizes = I(list(sizes)),
                            formats = I(list(formats)),
-                           size = I(size))
+                           size = I(size),
+                           link=paste0("https://www.gutenberg.org/ebooks/",i))
     gutenberg <- rbind(gutenberg,xmlframe)
   }
 }
