@@ -15,9 +15,11 @@
 
 # 30/03/2021
 # file has /pgterms, /dcterms (project Gutenberg, Document terms?)
-
 #  Trying to line up sizes (dcterm:extent) with file types (dcterm:format)
 #  These appear to be nested under file (pgterms:file) <- DONE
+
+# 01/04/2021
+# Added an Audio flag for audiobooks and set their size to 0.
 
 # Setup
 
@@ -45,7 +47,7 @@ gutenberg = data.frame()
 
 for(i in filenum){
 # for(i in tail(filenum,20)){  # the last 20
-#for(i in filenum[64500:64600]){    # the first 179
+# for(i in filenum[8650:8760]){    # Selected range
   rdf_file <- paste0(RDF_DIR,"/",i,"/pg",i,".rdf")  
   print(paste("reading file",rdf_file))
   pg <- read_xml(rdf_file)
@@ -65,7 +67,12 @@ for(i in filenum){
   files <- trimws(xml_text(xml_find_all(pg, "//pgterms:file")))                      # All the File details
   sizes <- trimws(xml_text(xml_find_all(pg, "//dcterms:extent")))                    # All the File Sizes
   size  <- as.numeric(sizes[grepl("text/plain",files)&!grepl("zip",files)][1])  # Size of the first text/plain which isn't a zip
-  SF <- sum(grepl("Science fiction",subjects))  # Science Fiction flag
+  SF_flag <- sum(grepl("Science fiction",subjects))  # Science Fiction flag
+  Audio_flag <- max(grepl("audio/mpeg",files))
+  if (Audio_flag){
+    audio_flag <- 1
+    size <-0 
+  } 
   language <- toString(language)
   #  print(paste("reading file number",i,":",title,"by",author))
   if(length(title)>0){
@@ -75,7 +82,8 @@ for(i in filenum){
                            filenumber=i, 
                            downloads, 
                            subject_list = I(list(subjects)), 
-                           SF,
+                           SF_flag,
+                           Audio_flag,
                            date, 
                            language, 
                            files = I(list(files)),
@@ -87,6 +95,7 @@ for(i in filenum){
   }
 }
 
+gutenberg$size <- as.numeric(gutenberg$size)
 gutenberg$year <- as.numeric(format(gutenberg$date,"%Y"))
 
 summary(gutenberg$language)
@@ -110,5 +119,6 @@ gutenberg[is.na(gutenberg$size),c('filenumber','title')]
 save(gutenberg,file=paste0(DATA_DIR,"/gutenberg.RData"))
 # Need to tidy up the export to XLS to capture subject - cannot export lists as columns in Excel
 write.xlsx(gutenberg %>% 
-             select(c("title","author","author_alias","filenumber","downloads","date","language","size","year","SF","link")),
+             select(c("title","author","author_alias","filenumber","downloads","date","language",
+                      "size","year","SF_flag","Audio_flag","link")),
            paste0(DATA_DIR,"/gutenberg.xlsx"))
