@@ -45,9 +45,9 @@ tail(filenum)
 
 gutenberg = data.frame()
 
-for(i in filenum){
-# for(i in tail(filenum,20)){  # the last 20
-# for(i in filenum[8650:8760]){    # Selected range
+#for(i in filenum){
+  # for(i in tail(filenum,20)){  # the last 20
+  for(i in filenum[8650:8760]){    # Selected range
   rdf_file <- paste0(RDF_DIR,"/",i,"/pg",i,".rdf")  
   print(paste("reading file",rdf_file))
   pg <- read_xml(rdf_file)
@@ -88,7 +88,6 @@ for(i in filenum){
                            language, 
                            files = I(list(files)),
                            sizes = I(list(sizes)),
-                           formats = I(list(formats)),
                            size = I(size),
                            link=paste0("https://www.gutenberg.org/ebooks/",i))
     gutenberg <- rbind(gutenberg,xmlframe)
@@ -111,8 +110,6 @@ hist(gutenberg$year,breaks = max(gutenberg$year)-min(gutenberg$year))
 print("Downloaded Most Often")
 tail(arrange(gutenberg[,c("title","author","downloads","date")],downloads),10)
 
-# File formats for missing sizes?
-gutenberg[,'formats'][is.na(gutenberg$size)]
 print("Files with NA size")
 gutenberg[is.na(gutenberg$size),c('filenumber','title')]  
 
