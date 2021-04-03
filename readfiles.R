@@ -45,9 +45,9 @@ tail(filenum)
 
 gutenberg = data.frame()
 
-#for(i in filenum){
+for(i in filenum){
   # for(i in tail(filenum,20)){  # the last 20
-  for(i in filenum[8650:8760]){    # Selected range
+  # for(i in filenum[8650:8760]){    # Selected range
   rdf_file <- paste0(RDF_DIR,"/",i,"/pg",i,".rdf")  
   print(paste("reading file",rdf_file))
   pg <- read_xml(rdf_file)
