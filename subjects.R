@@ -1,6 +1,8 @@
 # Analysis of Subjects.
 # How many different subjects are there?
 # Is there a minimum set of subjects?
+# to Check:filenum 64696 has no listed subjects.
+# To check: Records with no subjects?
 
 library(dplyr)
 library(openxlsx)

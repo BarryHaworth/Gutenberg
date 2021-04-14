@@ -29,8 +29,8 @@ library(openxlsx)
 
 PROJECT_DIR <- "c:/R/Gutenberg"
 DATA_DIR    <- paste0(PROJECT_DIR,"/data")
-# RDF_DIR     <- paste0(DATA_DIR,"/cache/epub")  # Old directory
-RDF_DIR     <- paste0(DATA_DIR,"/export/sunsite/users/gutenbackend/cache/epub")
+RDF_DIR     <- paste0(DATA_DIR,"/cache/epub")  # Old directory.  New again
+# RDF_DIR     <- paste0(DATA_DIR,"/export/sunsite/users/gutenbackend/cache/epub")
 
 # Get the list of files and convert to numbers
 filelist <- list.files(path= RDF_DIR)
