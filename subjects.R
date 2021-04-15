@@ -9,7 +9,7 @@ library(openxlsx)
 
 PROJECT_DIR <- "c:/R/Gutenberg"
 DATA_DIR    <- paste0(PROJECT_DIR,"/data")
-read(gutenberg,file=paste0(DATA_DIR,"/gutenberg.RData"))
+load(paste0(DATA_DIR,"/gutenberg.RData"))
 
 head(gutenberg$subject_list)
 
