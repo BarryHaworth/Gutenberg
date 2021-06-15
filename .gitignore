@@ -7,3 +7,5 @@
 *.pdf
 feedeR.pdf
 data/cache/
+*.log
+readfiles.log
