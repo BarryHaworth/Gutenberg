@@ -9,7 +9,7 @@ library(data.table)
 (PROJECT_DIR <- "c:/R/Gutenberg")
 DATA_DIR    <- "c:/R/Gutenberg/data"
 
-local_file <- paste0(DATA_DIR,"/rdf-files.tar.zip")
+local_file <- paste0(DATA_DIR,"/rdf-files-",Sys.Date(),".tar.zip")
 print(paste("Local file:",local_file))
 remote_file <- "https://www.gutenberg.org/cache/epub/feeds/rdf-files.tar.zip"
 print(paste("Remote File:",remote_file))
