@@ -108,7 +108,7 @@ hist(gutenberg$year,breaks = max(gutenberg$year)-min(gutenberg$year))
 
 # Maximum downloads?
 print("Downloaded Most Often")
-tail(arrange(gutenberg[,c("title","author","downloads","date")],downloads),10)
+tail(arrange(gutenberg[,c("title","author","downloads","date")],downloads),20)
 
 print("Files with NA size")
 gutenberg[is.na(gutenberg$size),c('filenumber','title')]  
