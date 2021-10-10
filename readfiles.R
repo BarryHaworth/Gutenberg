@@ -21,6 +21,9 @@
 # 01/04/2021
 # Added an Audio flag for audiobooks and set their size to 0.
 
+# 10/10/2021
+# Added code to perform update
+
 # Setup
 
 library(xml2)
@@ -43,7 +46,12 @@ tail(filenum)
 
 # Loop through list and extract the book information
 
-gutenberg = data.frame()
+# Load the previous database and create if not present.
+if (file.exists(paste0(DATA_DIR,"/gutenberg.RData"))){
+  load(paste0(DATA_DIR,"/gutenberg.RData"))
+} else gutenberg = data.frame()
+
+filenum <- filenum[!(filenum%in% gutenberg$filenumber)] 
 
 for(i in filenum){
   # for(i in tail(filenum,20)){  # the last 20
@@ -90,12 +98,12 @@ for(i in filenum){
                            sizes = I(list(sizes)),
                            size = I(size),
                            link=paste0("https://www.gutenberg.org/ebooks/",i))
+    xmlframe$size <- as.numeric(xmlframe$size)
+    xmlframe$year <- as.numeric(format(xmlframe$date,"%Y"))
     gutenberg <- rbind(gutenberg,xmlframe)
   }
 }
 
-gutenberg$size <- as.numeric(gutenberg$size)
-gutenberg$year <- as.numeric(format(gutenberg$date,"%Y"))
 
 summary(gutenberg$language)
 summary(gutenberg$date)
@@ -118,4 +126,4 @@ save(gutenberg,file=paste0(DATA_DIR,"/gutenberg.RData"))
 write.xlsx(gutenberg %>% 
              select(c("title","author","author_alias","filenumber","downloads","date","language",
                       "size","year","SF_flag","Audio_flag","link")),
-           paste0(DATA_DIR,"/gutenberg.xlsx"))
+           paste0(DATA_DIR,"/gutenberg-",Sys.Date(),".xlsx"))
