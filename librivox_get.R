@@ -16,8 +16,7 @@
 
 # https://librivox.org/api/feed/audiobooks/?id=52&format=json
 #
-# ID currently goes from 52 to 
-# https://librivox.org/api/feed/audiobooks/?id=17234
+# ID currently goes from 47 to 17234 (as at 23/10/2021)
 
 # This code loops through librivox files from 1 to 18000 and saves the results
 # as  xml files. (Decided not to use json)
