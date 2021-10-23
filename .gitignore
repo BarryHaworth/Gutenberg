@@ -10,3 +10,8 @@ data/cache/
 *.log
 readfiles.log
 getfiles.log
+*.xlsx
+*.xml
+*.RData
+data/*.*
+data/librivox/*.*
