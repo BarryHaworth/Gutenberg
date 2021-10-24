@@ -56,7 +56,7 @@ for (i in seq(1,length(lb_xml))){
   librivox <- rbind(librivox,book)
 }
 
-librivox <- librivox %>% unique()
+librivox <- librivox %>% unique() %>% arrange(id)
 
 save(librivox,file=paste0(DATA_DIR,"/librivox.RData"))
 write.xlsx(librivox,file=paste0(DATA_DIR,"/librivox.xlsx"))

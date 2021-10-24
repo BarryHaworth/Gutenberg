@@ -21,6 +21,9 @@
 # This code loops through librivox files from 1 to 18000 and saves the results
 # as  xml files. (Decided not to use json)
 
+# Issue with collections.  Details of individual chapters are not given.
+#  Using "&extended=1" lists the individual title, language and playtime, but not author and link
+
 library(rvest)
 library(dplyr)
 library(xml2)
@@ -30,6 +33,7 @@ DATA_DIR    <- paste0(PROJECT_DIR,"data/")
 LB_DIR      <- paste0(DATA_DIR,"librivox/")
 
 url <- "https://librivox.org/api/feed/audiobooks/?id=52"
+url <- "https://librivox.org/api/feed/audiobooks/?id=1555?extended=1"
 #url <- "https://librivox.org/api/feed/audiobooks"
 #local_file <- paste0(LB_DIR,"librivox52.xml")
 local_file <- paste0(LB_DIR,"librivox.xml")
