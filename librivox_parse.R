@@ -8,6 +8,8 @@ PROJECT_DIR <- "c:/R/Gutenberg/"
 DATA_DIR    <- paste0(PROJECT_DIR,"data/")
 LB_DIR      <- paste0(DATA_DIR,"librivox/")
 
+file.path(LB_DIR)
+
 # Load the previous database and create if not present.
 if (file.exists(paste0(DATA_DIR,"/librivox.RData"))){
   load(paste0(DATA_DIR,"/librivox.RData"))

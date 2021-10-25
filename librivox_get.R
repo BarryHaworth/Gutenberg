@@ -28,6 +28,7 @@ library(xml2)
 PROJECT_DIR <- "c:/R/Gutenberg/"
 DATA_DIR    <- paste0(PROJECT_DIR,"data/")
 LB_DIR      <- paste0(DATA_DIR,"librivox/")
+dir.create(file.path(LB_DIR))
 
 url <- "https://librivox.org/api/feed/audiobooks/?id=52"
 #url <- "https://librivox.org/api/feed/audiobooks"
