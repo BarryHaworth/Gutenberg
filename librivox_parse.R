@@ -53,7 +53,7 @@ for (i in seq(1,length(lb_xml))){
                   url_librivox,url_text_source,
                   totaltime,totaltimesecs,
                   author_id,author_first_name,author_last_name,author_dob,author_dod,
-                  stringsAsFactors = FALSE,fix.empty.names = TRUE)
+                  stringsAsFactors = FALSE)
   
   librivox <- rbind(librivox,book)
 }
