@@ -15,6 +15,13 @@ LB_DIR      <- paste0(DATA_DIR,"librivox/")
 
 load(paste0(DATA_DIR,"/librivox.RData"))  # Load the data
 
-# Identify Collections
+# Identify Collections:
+# Author=Various, no text source given.
 
-collect <- librivox %>% filter(author_last_name=="Various") %>% arrange(id)
+collect <- librivox %>% filter(author_last_name=="Various",url_text_source=="") %>% arrange(id)
+
+# How many by type?
+table(gsub("\\s*\\w*$", "", collect$title)) %>% sort()
+
+summary <- collect %>% mutate(collection = gsub("\\s*\\w*$", "", title)) %>%
+                   group_by(collection) %>% summarise(collections=n(), stories=sum(num_sections),time=sum(totaltimesecs/3600))
