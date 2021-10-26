@@ -1,8 +1,10 @@
 # Code to read the Librivox Collections
-
+# 
+# Adapted from the librivox_horror program
+#
 # This code Identifies the different Librivox collections
-# and then rips them to identify individual sections and their details
-# Title, Author, url_text_source, length
+# and identifies collects of horrora dn ghost stories
+# which it then downloads
 
 
 library(rvest)
@@ -36,6 +38,11 @@ gh <- rbind(ghost,horror) %>% unique()
 # Download the Ghost & Horror stories
 for (i in 1:nrow(gh)){
   filename=strsplit(gh$url_zip_file[i],"/")[[1]][6]
-  print(paste("downloading file",filename))
-  download.file(gh$url_zip_file[i],paste0(DATA_DIR,filename))
+  if (!file.exists(paste0(DATA_DIR,filename))){
+    print(paste("Downloading file",filename))
+    download.file(gh$url_zip_file[i],paste0(DATA_DIR,filename))
+  } else {
+    print(paste(filename,"--- File Already Exists"))
+  }
+  
 }
