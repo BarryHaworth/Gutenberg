@@ -4,7 +4,6 @@
 # and then rips them to identify individual sections and their details
 # Title, Author, url_text_source, length
 
-
 library(rvest)
 library(dplyr)
 library(xml2)
@@ -26,16 +25,29 @@ table(gsub("\\s*\\w*$", "", collect$title)) %>% sort()
 summary <- collect %>% mutate(collection = gsub("\\s*\\w*$", "", title)) %>%
                    group_by(collection) %>% summarise(collections=n(), stories=sum(num_sections),time=sum(totaltimesecs/3600))
 
-# Download Ghost and Horror
+# Rip contents of collections
+head(collect[c('id','title','url_librivox')])
 
-horror <- collect[grepl("Horror",collect$title),]
-ghost  <- collect[grepl("Ghost",collect$title),]
+url <- collect$url_librivox[1]  #First Ghost story collection.  Contains Gutenberg links
 
-gh <- rbind(ghost,horror) %>% unique()
+# Using https://www.storybench.org/scraping-html-tables-and-downloading-files-with-r/
 
-# Download the Ghost & Horror stories
-for (i in 1:nrow(gh)){
-  filename=strsplit(gh$url_zip_file[i],"/")[[1]][6]
-  print(paste("downloading file",filename))
-  download.file(gh$url_zip_file[i],paste0(DATA_DIR,filename))
-}
+#rip_url <- function(url){
+  webpage <- read_html(url)
+
+  chapters <- rvest::html_table(webpage)[[1]] %>% 
+    tibble::as_tibble(.name_repair = "unique") %>%
+    select(-c("Section","Source"))
+  chapters
+  
+  links <- webpage %>%
+    html_nodes(".chapter-download") %>%
+    html_nodes("a") 
+  
+  text_links <- links[grepl("Etext",links)] %>% html_attr("href")
+  text_links
+    
+  chapters$url_text_source <- text_links
+  
+#  return(chapters)
+#}
