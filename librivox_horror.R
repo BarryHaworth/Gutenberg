@@ -3,7 +3,7 @@
 # Adapted from the librivox_horror program
 #
 # This code Identifies the different Librivox collections
-# and identifies collects of horrora dn ghost stories
+# and identifies collects of horror and ghost stories
 # which it then downloads
 
 

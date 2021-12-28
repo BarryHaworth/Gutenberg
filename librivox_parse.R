@@ -16,8 +16,8 @@ if (file.exists(paste0(DATA_DIR,"/librivox.RData"))){
 } else librivox = data.frame()
 
 # Get a list of files
-librivox <- dir(LB_DIR)
-lb_xml   <- librivox[grepl("xml",librivox)]
+lb_list <- dir(LB_DIR)
+lb_xml  <- lb_list[grepl("xml",lb_list)]
 
 # Parse the results
 

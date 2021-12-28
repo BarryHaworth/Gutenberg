@@ -33,14 +33,38 @@ DATA_DIR    <- paste0(PROJECT_DIR,"data/")
 LB_DIR      <- paste0(DATA_DIR,"librivox/")
 dir.create(file.path(LB_DIR))
 
+# For testing
 url <- "https://librivox.org/api/feed/audiobooks/?id=52"
 url <- "https://librivox.org/api/feed/audiobooks/?id=1555?extended=1"
-#url <- "https://librivox.org/api/feed/audiobooks"
 #local_file <- paste0(LB_DIR,"librivox52.xml")
-local_file <- paste0(LB_DIR,"librivox.xml")
-download.file(url,local_file)
+#local_file <- paste0(LB_DIR,"librivox.xml")
+#download.file(url,local_file)
 
-for (i in seq(47,18000)){
+# Set the start and end points.  
+# If previously run, set end point at highest value + 1000
+if (file.exists(paste0(DATA_DIR,"/librivox.RData"))){
+  load(paste0(DATA_DIR,"/librivox.RData"))
+  end <- max(librivox$id)+250
+} else end <- 18000
+
+# Identify incomplete projects (files with duration of 0 seconds)
+if (exists("librivox")){
+  incomplete <- librivox %>% filter(totaltimesecs==0) %>% select(id,title)
+  # Retrieve the incomplete files
+  for (i in incomplete$id){
+    url_x   <- paste0("https://librivox.org/api/feed/audiobooks/?id=",i)
+    local_x <- paste0(LB_DIR,"librivox_",i,".xml")
+    print(paste("Updating incomplete file number",i))
+    tryCatch({
+      download.file(url_x,local_x,quiet=TRUE)
+    }
+    ,error = function(e) print(paste("Librivox file",i,"does not exist"))
+    )
+  }
+}
+
+# Retrieve the other files
+for (i in seq(47,end)){
   url_x   <- paste0("https://librivox.org/api/feed/audiobooks/?id=",i)
   local_x <- paste0(LB_DIR,"librivox_",i,".xml")
   if (!file.exists(local_x)){

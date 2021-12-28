@@ -26,7 +26,10 @@ collect <- librivox %>% filter(author_last_name=="Various",
 table(gsub("\\s*\\w*$", "", collect$title)) %>% sort()
 
 summary <- collect %>% mutate(collection = gsub("\\s*\\w*$", "", title)) %>%
-                   group_by(collection) %>% summarise(collections=n(), stories=sum(num_sections),time=sum(totaltimesecs/3600))
+                   group_by(collection) %>% 
+                   dplyr::summarise(collections=n(), 
+                                    stories=sum(num_sections),
+                                    time=sum(totaltimesecs/3600))
 
 # Rip contents of collections
 head(collect[c('id','title','url_librivox')])
