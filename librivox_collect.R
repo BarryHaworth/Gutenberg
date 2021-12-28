@@ -17,7 +17,9 @@ load(paste0(DATA_DIR,"/librivox.RData"))  # Load the data
 # Identify Collections:
 # Author=Various, no text source given.
 
-collect <- librivox %>% filter(author_last_name=="Various",url_text_source=="") %>% arrange(id)
+collect <- librivox %>% filter(author_last_name=="Various",
+                               url_text_source=="",
+                               totaltimesecs >0) %>% arrange(id)
 
 # How many by type?
 table(gsub("\\s*\\w*$", "", collect$title)) %>% sort()
@@ -32,7 +34,7 @@ url <- collect$url_librivox[1]  #First Ghost story collection.  Contains Gutenbe
 
 # Using https://www.storybench.org/scraping-html-tables-and-downloading-files-with-r/
 
-#rip_url <- function(url){
+rip_url <- function(url){
   webpage <- read_html(url)
 
   chapters <- rvest::html_table(webpage)[[1]] %>% 
@@ -49,5 +51,7 @@ url <- collect$url_librivox[1]  #First Ghost story collection.  Contains Gutenbe
     
   chapters$url_text_source <- text_links
   
-#  return(chapters)
-#}
+  return(chapters)
+}
+
+
