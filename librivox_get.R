@@ -47,7 +47,7 @@ if (file.exists(paste0(DATA_DIR,"/librivox.RData"))){
   end <- max(librivox$id)+250
 } else end <- 18000
 
-# Identify incomplete projects (files with duration of 0 seconds)
+# Identify incomplete projects (files with duration of zero seconds)
 if (exists("librivox")){
   incomplete <- librivox %>% filter(totaltimesecs==0) %>% select(id,title)
   # Retrieve the incomplete files

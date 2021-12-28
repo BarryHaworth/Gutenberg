@@ -104,7 +104,6 @@ for(i in filenum){
   }
 }
 
-
 summary(gutenberg$language)
 summary(gutenberg$date)
 summary(gutenberg$year)
@@ -121,9 +120,17 @@ tail(arrange(gutenberg[,c("title","author","downloads","date")],downloads),20)
 print("Files with NA size")
 gutenberg[is.na(gutenberg$size),c('filenumber','title')]  
 
+# Load the previous database and create if not present.
+if (file.exists(paste0(DATA_DIR,"/lib_gut.RData"))){
+  load(paste0(DATA_DIR,"/lib_gut.RData"))
+  lib_num <- unique(lib_gut$filenumber)
+  gutenberg$Librivox_flag <- as.numeric(gutenberg$filenumber %in% lib_num)
+} 
+
+
 save(gutenberg,file=paste0(DATA_DIR,"/gutenberg.RData"))
 # Need to tidy up the export to XLS to capture subject - cannot export lists as columns in Excel
 write.xlsx(gutenberg %>% 
              select(c("title","author","author_alias","filenumber","downloads","date","language",
-                      "size","year","SF_flag","Audio_flag","link")),
+                      "size","year","SF_flag","Audio_flag","Librivox_flag", "link")),
            paste0(DATA_DIR,"/gutenberg-",Sys.Date(),".xlsx"))
