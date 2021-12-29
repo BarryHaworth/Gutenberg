@@ -4,6 +4,8 @@
 # and then rips them to identify individual sections and their details
 # Title, Author, url_text_source, length
 
+# Updated to prevent ripping of collections already ripped
+
 library(rvest)
 library(plyr)
 library(dplyr)
@@ -62,6 +64,8 @@ rip_url(collect$url_librivox[38])
 
 if (file.exists(paste0(DATA_DIR,"/sections.RData"))){
   load(paste0(DATA_DIR,"/sections.RData"))
+  ripped_id <- sections %>% select(id) %>% unique()
+  collect <- collect %>% anti_join(ripped_id,by="id")
 } else sections=data.frame()  # Initialise Sections
 
 #for (i in seq(36,40)){
