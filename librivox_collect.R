@@ -60,7 +60,7 @@ rip_url <- function(url){
   return(chapters)
 }
 
-rip_url(collect$url_librivox[38])
+# rip_url(collect$url_librivox[38]) # Test Rip
 
 if (file.exists(paste0(DATA_DIR,"/sections.RData"))){
   load(paste0(DATA_DIR,"/sections.RData"))
