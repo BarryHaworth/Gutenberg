@@ -100,6 +100,7 @@ for(i in filenum){
                            link=paste0("https://www.gutenberg.org/ebooks/",i))
     xmlframe$size <- as.numeric(xmlframe$size)
     xmlframe$year <- as.numeric(format(xmlframe$date,"%Y"))
+    xmlframe$Librivox_flag <- 0
     gutenberg <- rbind(gutenberg,xmlframe)
   }
 }
@@ -127,6 +128,7 @@ if (file.exists(paste0(DATA_DIR,"/lib_gut.RData"))){
   gutenberg$Librivox_flag <- as.numeric(gutenberg$filenumber %in% lib_num)
 } 
 
+table(gutenberg$Librivox_flag)
 
 save(gutenberg,file=paste0(DATA_DIR,"/gutenberg.RData"))
 # Need to tidy up the export to XLS to capture subject - cannot export lists as columns in Excel
@@ -134,3 +136,4 @@ write.xlsx(gutenberg %>%
              select(c("title","author","author_alias","filenumber","downloads","date","language",
                       "size","year","SF_flag","Audio_flag","Librivox_flag", "link")),
            paste0(DATA_DIR,"/gutenberg-",Sys.Date(),".xlsx"))
+
