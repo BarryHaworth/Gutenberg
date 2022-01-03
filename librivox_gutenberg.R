@@ -1,6 +1,8 @@
 # Make a list of the Project Gutenberg texts that have 
 # been included in Librivox projects
 
+library(dplyr)
+
 PROJECT_DIR <- "c:/R/Gutenberg/"
 DATA_DIR    <- paste0(PROJECT_DIR,"data/")
 

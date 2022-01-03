@@ -13,7 +13,7 @@ library(xml2)
 
 PROJECT_DIR <- "c:/R/Gutenberg/"
 DATA_DIR    <- paste0(PROJECT_DIR,"data/")
-LB_DIR      <- paste0(DATA_DIR,"librivox/")
+LB_DIR      <- paste0(DATA_DIR,"librivox/zip/")
 
 load(paste0(DATA_DIR,"/librivox.RData"))  # Load the data
 
@@ -33,16 +33,15 @@ summary <- collect %>% mutate(collection = gsub("\\s*\\w*$", "", title)) %>%
 horror <- collect[grepl("Horror",collect$title),]
 ghost  <- collect[grepl("Ghost",collect$title),]
 
-gh <- rbind(ghost,horror) %>% unique()
+gh <- rbind(ghost,horror) %>% select("url_zip_file") %>% filter(url_zip_file != "") %>% unique() %>% arrange()
 
 # Download the Ghost & Horror stories
 for (i in 1:nrow(gh)){
-  filename=strsplit(gh$url_zip_file[i],"/")[[1]][6]
-  if (!file.exists(paste0(DATA_DIR,filename))){
-    print(paste("Downloading file",filename))
-    download.file(gh$url_zip_file[i],paste0(DATA_DIR,filename))
+  filename=tail(strsplit(gh$url_zip_file[i],"/")[[1]],1)
+  if (!file.exists(paste0(LB_DIR,filename))){
+    print(paste("Number",i,"Downloading file",filename))
+    download.file(gh$url_zip_file[i],paste0(LB_DIR,filename))
   } else {
-    print(paste(filename,"--- File Already Exists"))
+    print(paste("Number",i,filename,"--- File Already Exists"))
   }
-  
 }
