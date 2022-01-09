@@ -11,8 +11,15 @@ load(paste0(DATA_DIR,"/sections.RData"))  # Load the librivox sections data
 load(paste0(DATA_DIR,"/gutenberg.RData"))  # Load the Gutenberg data
 
 # Extract the URLS and filter for Gutenberg
-lib_url  <- librivox %>% select(url_text_source) %>% filter(grepl("www.gutenberg.org",url_text_source))
-sect_url <- sections %>% select(url_text_source) %>% filter(grepl("www.gutenberg.org",url_text_source))
+lib_url  <- librivox %>% 
+  mutate(Author=paste(author_first_name,author_last_name)) %>%
+  select(id,title,Author,url_text_source,totaltimesecs) %>% 
+  filter(grepl("www.gutenberg.org",url_text_source))
+
+sect_url <- sections %>% 
+  select(id,Chapter,Author,url_text_source,totaltimesecs) %>% 
+  rename(title=Chapter) %>%
+  filter(grepl("www.gutenberg.org",url_text_source))
 
 lib_gut <- rbind(lib_url,sect_url) %>% unique() %>% arrange(url_text_source)
 
