@@ -7,7 +7,7 @@ PROJECT_DIR <- "c:/R/Gutenberg/"
 DATA_DIR    <- paste0(PROJECT_DIR,"data/")
 
 load(paste0(DATA_DIR,"/librivox.RData"))  # Load the Librivox data
-load(paste0(DATA_DIR,"/sections.RData"))  # Load the librivox sections data
+load(paste0(DATA_DIR,"/sections.RData"))  # Load the Librivox sections data
 load(paste0(DATA_DIR,"/gutenberg.RData"))  # Load the Gutenberg data
 
 # Extract the URLS and filter for Gutenberg
