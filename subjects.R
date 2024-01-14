@@ -2,7 +2,10 @@
 # How many different subjects are there?
 # Is there a minimum set of subjects?
 # to Check: filenum 64696 has no listed subjects.
-# To check: Records with no subjects?
+# To check: 
+#   Records with no subjects?
+#   Library of Congress Category.
+#   Genre?
 
 library(dplyr)
 library(openxlsx)
@@ -12,6 +15,7 @@ DATA_DIR    <- paste0(PROJECT_DIR,"/data")
 load(paste0(DATA_DIR,"/gutenberg.RData"))
 
 head(gutenberg$subject_list)
+tail(gutenberg$subject_list)
 
 # Expand the subjects
 
