@@ -17,6 +17,7 @@
 # https://librivox.org/api/feed/audiobooks/?id=52&format=json
 #
 # ID currently goes from 47 to 17234 (as at 23/10/2021)
+# ID = 20726 as at 07/07/2024
 
 # This code loops through librivox files from 1 to 18000 and saves the results
 # as  xml files. (Decided not to use json)
@@ -45,7 +46,7 @@ url <- "https://librivox.org/api/feed/audiobooks/?id=1555?extended=1"
 if (file.exists(paste0(DATA_DIR,"/librivox.RData"))){
   load(paste0(DATA_DIR,"/librivox.RData"))
   end <- max(librivox$id)+250
-} else end <- 18000
+} else end <- 21000
 
 # Identify incomplete projects (files with duration of zero seconds)
 if (exists("librivox")){

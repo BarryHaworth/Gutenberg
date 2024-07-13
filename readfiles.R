@@ -72,6 +72,8 @@ for(i in filenum){
   language <- toString(language)
   d <- trimws(xml_text(xml_find_all(pg, "//dcterms:issued")))                        # Date Issued
   if(d != "None")  date <- as.Date(d)
+  copyright_year <- as.numeric(trimws(xml_text(xml_find_all(pg, "//pgterms:marc906"))))                       # Copyright Year
+  copyright_year <- max(0,copyright_year)
   files <- trimws(xml_text(xml_find_all(pg, "//pgterms:file")))                      # All the File details
   sizes <- trimws(xml_text(xml_find_all(pg, "//dcterms:extent")))                    # All the File Sizes
   size  <- as.numeric(sizes[grepl("text/plain",files)&!grepl("zip",files)][1])  # Size of the first text/plain which isn't a zip
@@ -87,7 +89,8 @@ for(i in filenum){
     xmlframe <- data.frame(title, 
                            author,
                            author_alias,
-                           filenumber=i, 
+                           filenumber=i,
+                           copyright_year,
                            downloads, 
                            subject_list = I(list(subjects)), 
                            SF_flag,
@@ -107,12 +110,15 @@ for(i in filenum){
 
 summary(gutenberg$language)
 summary(gutenberg$date)
+summary(gutenberg$copyright_year)
 summary(gutenberg$year)
 summary(gutenberg$downloads)
 summary(gutenberg$size)
+table(gutenberg$copyright_year)
 
 hist(gutenberg$downloads)
 hist(gutenberg$year,breaks = max(gutenberg$year)-min(gutenberg$year))
+hist(gutenberg$copyright_year[gutenberg$copyright_year>0])
 
 # Maximum downloads?
 print("Downloaded Most Often")
@@ -134,6 +140,6 @@ save(gutenberg,file=paste0(DATA_DIR,"/gutenberg.RData"))
 # Need to tidy up the export to XLS to capture subject - cannot export lists as columns in Excel
 write.xlsx(gutenberg %>% 
              select(c("title","author","author_alias","filenumber","downloads","date","language",
-                      "size","year","SF_flag","Audio_flag","Librivox_flag", "link")),
+                      "size","copyright_year","year","SF_flag","Audio_flag","Librivox_flag", "link")),
            paste0(DATA_DIR,"/gutenberg-",Sys.Date(),".xlsx"))
 

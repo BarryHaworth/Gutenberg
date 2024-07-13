@@ -40,14 +40,14 @@ for (i in seq(1,length(lb_xml))){
   url_project     <- toString(xml_data$url_project)
   url_other       <- toString(xml_data$url_other)
   totaltime       <- toString(xml_data$totaltime)
-  totaltimesecs   <- as.numeric(xml_data$totaltimesecs)
+  totaltimesecs   <- max(0,as.numeric(xml_data$totaltimesecs))
   author_id         <- max(0,as.numeric(xml_data$authors[1]$author$id))
   author_first_name <- toString(xml_data$authors[1]$author$first_name)
   author_last_name  <- toString(xml_data$authors[1]$author$last_name)
   author_dob        <- max(0,as.numeric(xml_data$authors[1]$author$dob))
   author_dod        <- max(0,as.numeric(xml_data$authors[1]$author$dod))
   
-  print(paste("Book #",i,title,"by",author_first_name,author_last_name))
+  print(paste("Book:",i,"ID:",id,title,"by",author_first_name,author_last_name))
   
   book=data.frame(id,title,description,language,copyright_year,num_sections,
                   url_librivox,url_text_source,url_zip_file,url_rss,url_project,url_other,
